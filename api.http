@@ -1,0 +1,57 @@
+### 1. Создать отправителя
+POST http://locaкноlhost:8080/api/senders
+Content-Type: application/json
+
+{
+  "name": "Иван Отправитель",
+  "phone": "+79991234567",
+  "address": "Москва, ул. Пушкина, д. 1"
+}
+
+### 2. Создать получателя
+POST http://localhost:8080/api/recipients
+Content-Type: application/json
+
+{
+  "name": "Пётр Получатель",
+  "phone": "+79997654321",
+  "address": "Москва, ул. Лермонтова, д. 5"
+}
+
+### 3. Создать курьера
+POST http://localhost:8080/api/couriers
+Content-Type: application/json
+
+{
+  "name": "Курьер Коля",
+  "phone": "+79995550011"
+}
+
+### 4. Посмотреть всех отправителей
+GET http://localhost:8080/api/senders
+
+### 5. Создать посылку (после того, как будут senderId и recipientId)
+POST http://localhost:8080/api/parcels
+Content-Type: application/json
+
+{
+  "trackingNumber": "TRK-001",
+  "description": "Документы",
+  "weightKg": 1.5,
+  "senderId": 1,
+  "recipientId": 1
+}
+
+### 6. Создать доставку (после того, как будут parcelId и courierId)
+POST http://localhost:8080/api/deliveries
+Content-Type: application/json
+
+{
+  "parcelId": 1,
+  "courierId": 1,
+  "deliveryDate": "2025-12-01",
+  "slotNumber": 1
+}
+
+### 7. Посмотреть все доставки
+GET http://localhost:8080/api/deliveries
