@@ -16,6 +16,15 @@ public class CourierService {
     }
 
     public Courier create(Courier courier) {
+        if (courier.getIsAvailable() == null) {
+            courier.setIsAvailable(true);
+        }
+        if (courier.getCurrentLoad() == null) {
+            courier.setCurrentLoad(0);
+        }
+        if (courier.getMaxLoad() == null) {
+            courier.setMaxLoad(5);
+        }
         return courierRepository.save(courier);
     }
 
@@ -32,6 +41,15 @@ public class CourierService {
         Courier existing = getById(id);
         existing.setName(updated.getName());
         existing.setPhone(updated.getPhone());
+        if (updated.getIsAvailable() != null) {
+            existing.setIsAvailable(updated.getIsAvailable());
+        }
+        if (updated.getCurrentLoad() != null) {
+            existing.setCurrentLoad(updated.getCurrentLoad());
+        }
+        if (updated.getMaxLoad() != null) {
+            existing.setMaxLoad(updated.getMaxLoad());
+        }
         return courierRepository.save(existing);
     }
 

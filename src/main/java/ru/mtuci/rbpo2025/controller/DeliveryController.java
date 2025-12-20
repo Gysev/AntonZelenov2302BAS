@@ -2,6 +2,7 @@ package ru.mtuci.rbpo2025.controller;
 
 import org.springframework.web.bind.annotation.*;
 import ru.mtuci.rbpo2025.model.Delivery;
+import ru.mtuci.rbpo2025.service.BusinessService;
 import ru.mtuci.rbpo2025.service.DeliveryService;
 
 import java.util.List;
@@ -11,9 +12,11 @@ import java.util.List;
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
+    private final BusinessService businessService;
 
-    public DeliveryController(DeliveryService deliveryService) {
+    public DeliveryController(DeliveryService deliveryService, BusinessService businessService) {
         this.deliveryService = deliveryService;
+        this.businessService = businessService;
     }
 
     @PostMapping
@@ -39,5 +42,10 @@ public class DeliveryController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         deliveryService.delete(id);
+    }
+
+    @PostMapping("/{id}/complete")
+    public Delivery completeDelivery(@PathVariable Long id) {
+        return businessService.completeDelivery(id);
     }
 }

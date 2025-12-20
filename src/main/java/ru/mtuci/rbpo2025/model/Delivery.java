@@ -29,5 +29,13 @@ public class Delivery {
     private LocalDateTime deliveredAt;
 
     private LocalDate deliveryDate;
-    private Integer slotNumber; // 1 – утро, 2 – день, 3 – вечер
+    private Integer slotNumber;
+    
+    private LocalDateTime scheduledFor;
+    
+    private LocalDateTime slaDeadline;
+    private Boolean isOverdue;
+    
+    private Double cancellationCompensation;
+    private String cancellationReason;
 }

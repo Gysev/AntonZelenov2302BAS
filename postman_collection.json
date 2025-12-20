@@ -1,0 +1,1390 @@
+{
+	"info": {
+		"name": "RBPO 2025 - Все задания",
+		"description": "Коллекция запросов для заданий 1-4 курса РБПО 2025",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Автоматически читаем CSRF токен из cookie или переменной перед каждым запросом",
+					"// Для POST/PUT/DELETE запросов нужен CSRF токен",
+					"const method = pm.request.method;",
+					"if (method === 'POST' || method === 'PUT' || method === 'DELETE' || method === 'PATCH') {",
+					"    // Сначала пробуем из cookie (основной способ)",
+					"    let csrfToken = pm.cookies.get('XSRF-TOKEN');",
+					"    ",
+					"    // Если в cookie нет, используем переменную коллекции (fallback)",
+					"    if (!csrfToken) {",
+					"        csrfToken = pm.collectionVariables.get('csrfToken');",
+					"        if (csrfToken) {",
+					"            console.log('Using CSRF Token from collection variable: ' + csrfToken);",
+					"        }",
+					"    } else {",
+					"        // Обновляем переменную коллекции из cookie",
+					"        pm.collectionVariables.set('csrfToken', csrfToken);",
+					"        console.log('CSRF Token from cookie: ' + csrfToken);",
+					"    }",
+					"    ",
+					"    // Если токен все еще не найден, предупреждаем",
+					"    if (!csrfToken) {",
+					"        console.log('⚠️ CSRF Token not found! Make sure to call GET /api/csrf first.');",
+					"    }",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "csrfToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminUsername",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "adminPassword",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userUsername",
+			"value": "user",
+			"type": "string"
+		},
+		{
+			"key": "userPassword",
+			"value": "User123!@#",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Задание 1 - Базовые контроллеры",
+			"item": [
+				{
+					"name": "GET Hello",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": ["{{baseUrl}}"],
+							"path": [""]
+						}
+					}
+				},
+				{
+					"name": "GET Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/info",
+							"host": ["{{baseUrl}}"],
+							"path": ["info"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Задание 2 - REST CRUD",
+			"item": [
+				{
+					"name": "CRUD - Senders",
+					"item": [
+						{
+							"name": "POST Create sender",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Иван Отправитель\",\n  \"phone\": \"+79991234567\",\n  \"address\": \"Москва, ул. Пушкина, д. 1\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/senders",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get all senders",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/senders",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get sender by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/senders/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "PUT Update sender",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Иван Отправитель Обновленный\",\n  \"phone\": \"+79991234568\",\n  \"address\": \"Москва, ул. Пушкина, д. 2\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/senders/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "DELETE Delete sender",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/senders/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "CRUD - Recipients",
+					"item": [
+						{
+							"name": "POST Create recipient",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Пётр Получатель\",\n  \"phone\": \"+79997654321\",\n  \"address\": \"Москва, ул. Лермонтова, д. 5\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipients",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "recipients"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get all recipients",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/recipients",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "recipients"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get recipient by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/recipients/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "recipients", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "PUT Update recipient",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Пётр Получатель Обновленный\",\n  \"phone\": \"+79997654322\",\n  \"address\": \"Москва, ул. Лермонтова, д. 6\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/recipients/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "recipients", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "DELETE Delete recipient",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/recipients/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "recipients", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "CRUD - Couriers",
+					"item": [
+						{
+							"name": "POST Create courier",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Курьер Коля\",\n  \"phone\": \"+79995550011\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/couriers",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "couriers"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get all couriers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/couriers",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "couriers"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get courier by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/couriers/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "couriers", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "PUT Update courier",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Курьер Коля Обновленный\",\n  \"phone\": \"+79995550012\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/couriers/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "couriers", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "DELETE Delete courier",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/couriers/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "couriers", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "CRUD - Parcels",
+					"item": [
+						{
+							"name": "POST Create parcel",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"trackingNumber\": \"TRK-001\",\n  \"description\": \"Документы\",\n  \"weightKg\": 1.5,\n  \"senderId\": 1,\n  \"recipientId\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/parcels",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "parcels"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get all parcels",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/parcels",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "parcels"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get parcel by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/parcels/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "parcels", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "PUT Update parcel",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"trackingNumber\": \"TRK-001-UPDATED\",\n  \"description\": \"Документы обновленные\",\n  \"weightKg\": 2.0,\n  \"senderId\": 1,\n  \"recipientId\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/parcels/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "parcels", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "DELETE Delete parcel",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/parcels/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "parcels", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "CRUD - Deliveries",
+					"item": [
+						{
+							"name": "POST Create delivery",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"parcelId\": 1,\n  \"courierId\": 1,\n  \"deliveryDate\": \"2025-12-25\",\n  \"slotNumber\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/deliveries",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "deliveries"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get all deliveries",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/deliveries",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "deliveries"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "GET Get delivery by id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/deliveries/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "deliveries", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{userUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{userPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "PUT Update delivery",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"parcelId\": 1,\n  \"courierId\": 1,\n  \"status\": \"ASSIGNED\",\n  \"deliveryDate\": \"2025-12-26\",\n  \"slotNumber\": 2\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/deliveries/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "deliveries", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "DELETE Delete delivery",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "X-XSRF-TOKEN",
+										"value": "{{csrfToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/deliveries/1",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "deliveries", "1"]
+								},
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "username",
+											"value": "{{adminUsername}}",
+											"type": "string"
+										},
+										{
+											"key": "password",
+											"value": "{{adminPassword}}",
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Задание 3 - Бизнес-операции",
+			"item": [
+				{
+					"name": "POST Create order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{csrfToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"senderId\": 1,\n  \"recipientId\": 1,\n  \"courierId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/business/orders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "business", "orders"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{userUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{userPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Операция 1: Перераспределение доставок при недоступности курьера",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{csrfToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"unavailableCourierId\": 1,\n  \"reason\": \"Курьер заболел\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/business/couriers/unavailable/redistribute",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "business", "couriers", "unavailable", "redistribute"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{adminUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{adminPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Операция 2: Умное назначение курьера с учётом нагрузки",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{csrfToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"deliveryId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/business/deliveries/smart-assign",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "business", "deliveries", "smart-assign"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{adminUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{adminPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Операция 3: Отложенная доставка с автоматической активацией",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{csrfToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"deliveryId\": 1,\n  \"scheduledFor\": \"2025-12-25T10:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/business/deliveries/schedule",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "business", "deliveries", "schedule"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{adminUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{adminPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Операция 4: Частичная отмена заказа с компенсацией",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{csrfToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orderId\": 1,\n  \"reason\": \"Изменение адреса доставки\",\n  \"compensationAmount\": 500.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/business/orders/partial-cancel",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "business", "orders", "partial-cancel"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{adminUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{adminPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Операция 5: Контроль SLA и автоматическое помечание просрочек",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{csrfToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/business/deliveries/check-sla",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "business", "deliveries", "check-sla"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{adminUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{adminPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Задание 4 - Безопасность",
+			"item": [
+				{
+					"name": "GET Get CSRF token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Читаем CSRF токен из cookie (Spring Security устанавливает его в cookie XSRF-TOKEN)",
+									"// Cookie устанавливается автоматически при любом запросе к защищенному endpoint",
+									"if (pm.response.code === 200) {",
+									"    // Сначала пробуем из cookie (основной способ)",
+									"    const csrfCookie = pm.cookies.get('XSRF-TOKEN');",
+									"    if (csrfCookie) {",
+									"        pm.collectionVariables.set('csrfToken', csrfCookie);",
+									"        console.log('✅ CSRF Token from cookie saved: ' + csrfCookie);",
+									"    } else {",
+									"        // Если в cookie нет, пробуем из JSON ответа (fallback)",
+									"        try {",
+									"            var jsonData = pm.response.json();",
+									"            if (jsonData.token) {",
+									"                pm.collectionVariables.set('csrfToken', jsonData.token);",
+									"                console.log('✅ CSRF Token from JSON saved: ' + jsonData.token);",
+									"            } else {",
+									"                console.log('⚠️ CSRF Token not found in response. Try making any GET request first.');",
+									"            }",
+									"        } catch (e) {",
+									"            console.log('⚠️ Could not parse JSON response. Cookie should be set after this request.');",
+									"        }",
+									"    }",
+									"} else {",
+									"    console.log('❌ Failed to get CSRF token. Response code: ' + pm.response.code);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/csrf",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "csrf"]
+						}
+					}
+				},
+				{
+					"name": "POST Register user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"Test123!@#\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "GET Check auth (with login)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/senders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "senders"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{userUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{userPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "GET Check auth (no login) - should fail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/senders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "senders"]
+						}
+					}
+				},
+				{
+					"name": "POST Test with token (admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{csrfToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Sender\",\n  \"phone\": \"+79999999999\",\n  \"address\": \"Test Address\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/senders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "senders"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{adminUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{adminPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "POST Test without token - should fail",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Sender\",\n  \"phone\": \"+79999999999\",\n  \"address\": \"Test Address\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/senders",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "senders"]
+						},
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{adminUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{adminPassword}}",
+									"type": "string"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}
+

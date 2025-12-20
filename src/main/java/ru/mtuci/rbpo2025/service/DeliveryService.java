@@ -20,6 +20,12 @@ public class DeliveryService {
     public Delivery create(Delivery delivery) {
         delivery.setStatus(DeliveryStatus.CREATED);
         delivery.setCreatedAt(LocalDateTime.now());
+        if (delivery.getIsOverdue() == null) {
+            delivery.setIsOverdue(false);
+        }
+        if (delivery.getSlaDeadline() == null) {
+            delivery.setSlaDeadline(LocalDateTime.now().plusDays(3));
+        }
         validateSlot(delivery);
         return deliveryRepository.save(delivery);
     }

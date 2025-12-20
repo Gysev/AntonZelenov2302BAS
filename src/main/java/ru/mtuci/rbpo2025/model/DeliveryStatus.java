@@ -6,5 +6,8 @@ public enum DeliveryStatus {
     PICKED_UP,
     IN_TRANSIT,
     DELIVERED,
-    CANCELED
+    CANCELED,
+    SCHEDULED,
+    OVERDUE,
+    PARTIALLY_CANCELED
 }

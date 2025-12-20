@@ -13,7 +13,7 @@ import java.security.SecureRandom;
 import java.util.Set;
 
 @Component
-@Profile("local") // чтобы в прод-профиле случайно не плодить админа
+@Profile("local")
 public class AdminInitializer implements ApplicationRunner {
 
     private static final String ADMIN_USERNAME = "admin";
@@ -37,7 +37,7 @@ public class AdminInitializer implements ApplicationRunner {
         AppUser admin = new AppUser();
         admin.setUsername(ADMIN_USERNAME);
         admin.setPassword(passwordEncoder.encode(rawPassword));
-        admin.setRoles(Set.of(Role.ADMIN, Role.USER)); // если USER не нужен — убери
+        admin.setRoles(Set.of(Role.ADMIN, Role.USER));
 
         userRepository.save(admin);
 

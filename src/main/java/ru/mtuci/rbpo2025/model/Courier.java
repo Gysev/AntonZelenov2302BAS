@@ -17,4 +17,8 @@ public class Courier {
 
     private String name;
     private String phone;
+    
+    private Boolean isAvailable;
+    private Integer currentLoad;
+    private Integer maxLoad;
 }

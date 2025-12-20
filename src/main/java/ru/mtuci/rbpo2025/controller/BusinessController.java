@@ -1,16 +1,15 @@
 package ru.mtuci.rbpo2025.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.mtuci.rbpo2025.dto.AssignCourierRequest;
-import ru.mtuci.rbpo2025.dto.CreateOrderRequest;
-import ru.mtuci.rbpo2025.dto.SetDeliveryStatusRequest;
+import ru.mtuci.rbpo2025.dto.*;
 import ru.mtuci.rbpo2025.model.Delivery;
 import ru.mtuci.rbpo2025.service.BusinessService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/business")
 public class BusinessController {
 
     private final BusinessService businessService;
@@ -20,27 +19,32 @@ public class BusinessController {
     }
 
     @PostMapping("/orders")
-    public Delivery createOrder(@RequestBody CreateOrderRequest req) {
-        return businessService.createOrder(req);
+    public ResponseEntity<Delivery> createOrder(@RequestBody CreateOrderRequest req) {
+        return ResponseEntity.ok(businessService.createOrder(req));
     }
 
-    @PatchMapping("/deliveries/{id}/assign")
-    public Delivery assignCourier(@PathVariable Long id, @RequestBody AssignCourierRequest req) {
-        return businessService.assignCourier(id, req);
+    @PostMapping("/couriers/unavailable/redistribute")
+    public ResponseEntity<RedistributeDeliveriesResponse> redistributeDeliveries(@RequestBody RedistributeDeliveriesRequest req) {
+        return ResponseEntity.ok(businessService.redistributeDeliveriesForUnavailableCourier(req));
     }
 
-    @PatchMapping("/deliveries/{id}/status")
-    public Delivery setDeliveryStatus(@PathVariable Long id, @RequestBody SetDeliveryStatusRequest req) {
-        return businessService.setDeliveryStatus(id, req);
+    @PostMapping("/deliveries/smart-assign")
+    public ResponseEntity<Delivery> smartAssignCourier(@RequestBody SmartAssignCourierRequest req) {
+        return ResponseEntity.ok(businessService.smartAssignCourier(req));
     }
 
-    @PostMapping("/deliveries/{id}/complete")
-    public Delivery complete(@PathVariable Long id) {
-        return businessService.completeDelivery(id);
+    @PostMapping("/deliveries/schedule")
+    public ResponseEntity<Delivery> scheduleDelivery(@RequestBody ScheduleDeliveryRequest req) {
+        return ResponseEntity.ok(businessService.scheduleDelivery(req));
     }
 
-    @GetMapping("/couriers/{id}/deliveries")
-    public List<Delivery> getCourierDeliveries(@PathVariable Long id) {
-        return businessService.getCourierDeliveries(id);
+    @PostMapping("/orders/partial-cancel")
+    public ResponseEntity<PartialCancelResponse> partialCancelOrder(@RequestBody PartialCancelRequest req) {
+        return ResponseEntity.ok(businessService.partialCancelOrder(req));
+    }
+
+    @PostMapping("/deliveries/check-sla")
+    public ResponseEntity<CheckSlaResponse> checkAndMarkOverdue() {
+        return ResponseEntity.ok(businessService.checkAndMarkOverdueDeliveries());
     }
 }

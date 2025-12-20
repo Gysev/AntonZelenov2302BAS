@@ -13,10 +13,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final AppUserDetailsService userDetailsService;
+
+    public SecurityConfig(AppUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,8 +46,21 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain api(HttpSecurity http) throws Exception {
+        CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        csrfTokenRepository.setCookieName("XSRF-TOKEN");
+        csrfTokenRepository.setHeaderName("X-XSRF-TOKEN");
+        csrfTokenRepository.setCookiePath("/");
+        
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        requestHandler.setCsrfRequestAttributeName("_csrf");
+        
         http
-                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                .userDetailsService(userDetailsService)
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(csrfTokenRepository)
+                        .csrfTokenRequestHandler(requestHandler)
+                        .ignoringRequestMatchers("/api/auth/register")
+                )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
@@ -72,9 +92,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/deliveries/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/deliveries/**").hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/api/orders").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/deliveries/*/complete").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/business/orders").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/deliveries/*/complete").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/couriers/*/deliveries").hasAnyRole("USER", "ADMIN")
+                        
+                        .requestMatchers(HttpMethod.POST, "/api/business/couriers/unavailable/redistribute").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/business/deliveries/smart-assign").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/business/deliveries/schedule").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/business/orders/partial-cancel").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/business/deliveries/check-sla").hasRole("ADMIN")
 
                         .anyRequest().authenticated()
                 );
