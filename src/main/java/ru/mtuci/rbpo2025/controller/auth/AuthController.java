@@ -39,6 +39,9 @@ public class AuthController {
         if (!isStrongPassword(password)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "weak password");
         }
+        if (username.equalsIgnoreCase("admin")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "cannot register as admin");
+        }
 
         AppUser u = new AppUser()
                 .setUsername(username)
