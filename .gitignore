@@ -40,3 +40,7 @@ out/
 .env.*
 application-secret.properties
 application-local.properties
+
+# Документация для защиты (не пушить в git)
+SQL_INSTRUCTIONS.md
+TASK5_EXPLANATION.md
