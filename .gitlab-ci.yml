@@ -1,0 +1,105 @@
+# GitLab CI/CD Pipeline для задания 6
+# ВАЖНО: Настройте переменные в GitLab Settings > CI/CD > Variables:
+# - KEYSTORE_BASE64 (base64 encoded keystore.p12)
+# - KEYSTORE_PASSWORD (пароль от keystore)
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+# Сборка проекта
+build:
+  stage: build
+  image: gradle:7.6-jdk17
+  script:
+    - echo "=== Сборка проекта ==="
+    - ./gradlew clean build -x test
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Запуск тестов
+test:
+  stage: test
+  image: gradle:7.6-jdk17
+  services:
+    - postgres:15
+  variables:
+    POSTGRES_DB: rbpo2025_test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    DB_URL: "jdbc:postgresql://postgres:5432/rbpo2025_test"
+  script:
+    - echo "=== Запуск тестов ==="
+    - ./gradlew test
+  artifacts:
+    reports:
+      junit:
+        - build/test-results/test/*.xml
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests
+
+# Упаковка артефакта с keystore
+package:
+  stage: package
+  image: gradle:7.6-jdk17
+  before_script:
+    - echo "=== Подготовка keystore ==="
+    - |
+      if [ -n "$KEYSTORE_BASE64" ]; then
+        echo "$KEYSTORE_BASE64" | base64 -d > src/main/resources/keystore.p12
+        echo "Keystore восстановлен из переменной"
+      else
+        echo "WARNING: KEYSTORE_BASE64 не установлена!"
+      fi
+  script:
+    - echo "=== Упаковка артефакта ==="
+    - ./gradlew bootJar
+    - mkdir -p artifacts
+    - cp build/libs/*.jar artifacts/
+    - |
+      if [ -f src/main/resources/keystore.p12 ]; then
+        cp src/main/resources/keystore.p12 artifacts/
+        echo "Keystore включен в артефакт"
+      fi
+  artifacts:
+    paths:
+      - artifacts/
+    expire_in: 1 week
+  only:
+    - main
+    - tags
+
+# Загрузка в хранилище артефактов (пример для GitLab Package Registry)
+deploy:
+  stage: deploy
+  image: curlimages/curl:latest
+  script:
+    - echo "=== Загрузка артефакта в GitLab Package Registry ==="
+    - |
+      PACKAGE_NAME="rbpo2025-${CI_COMMIT_SHORT_SHA}.jar"
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+           --upload-file artifacts/*.jar \
+           "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/rbpo2025/${CI_COMMIT_REF_SLUG}/${PACKAGE_NAME}"
+    - echo "Артефакт загружен: ${PACKAGE_NAME}"
+  only:
+    - main
+    - tags
+  dependencies:
+    - package
+
+

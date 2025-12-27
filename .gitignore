@@ -41,6 +41,36 @@ out/
 application-secret.properties
 application-local.properties
 
-# Документация для защиты (не пушить в git)
+# Документация, инструкции и подсказки (не пушить в git)
 SQL_INSTRUCTIONS.md
 TASK5_EXPLANATION.md
+TASK6_EXPLANATION.md
+TASK6_CHECKLIST.md
+GITHUB_SETUP_GUIDE.md
+GIT_PUSH_COMMANDS.md
+DO_NOW_TASK6.md
+QUICK_START.md
+HELP.md
+
+# Скрипты с подсказками
+prepare-github-secrets.ps1
+make_user_admin.sql
+
+# HTTP файлы с примерами запросов
+api.http
+
+# Сертификаты и ключи (НЕ ПУШИТЬ В GIT!)
+certificates/
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*.truststore
+*.csr
+*.crt
+*.cer
+src/main/resources/keystore.p12
+
+# Base64 keystore для CI/CD (не пушить в git!)
+keystore-base64.txt

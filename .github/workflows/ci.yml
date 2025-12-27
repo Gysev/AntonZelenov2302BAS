@@ -1,0 +1,163 @@
+# GitHub Actions CI/CD Pipeline для задания 6
+# ВАЖНО: Настройте Secrets в GitHub Settings > Secrets and variables > Actions:
+# - KEYSTORE_BASE64 (base64 encoded keystore.p12)
+# - KEYSTORE_PASSWORD (пароль от keystore)
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build/libs/*.jar
+          retention-days: 7
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: rbpo2025_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Run tests
+        run: ./gradlew test
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/rbpo2025_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: build/test-results/test/*.xml
+          retention-days: 7
+
+  package:
+    name: Package with Keystore
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Restore keystore from secret
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > src/main/resources/keystore.p12
+            echo "Keystore восстановлен из secret"
+          else
+            echo "WARNING: KEYSTORE_BASE64 secret не установлен!"
+          fi
+      
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      - name: Build JAR with keystore
+        run: ./gradlew bootJar
+      
+      - name: Create artifacts directory
+        run: mkdir -p artifacts
+      
+      - name: Copy JAR to artifacts
+        run: cp build/libs/*.jar artifacts/
+      
+      - name: Copy keystore to artifacts (if exists)
+        run: |
+          if [ -f src/main/resources/keystore.p12 ]; then
+            cp src/main/resources/keystore.p12 artifacts/
+            echo "Keystore включен в артефакт"
+          fi
+      
+      - name: Upload packaged artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-artifacts
+          path: artifacts/
+          retention-days: 7
+
+  deploy:
+    name: Deploy to Artifact Repository
+    runs-on: ubuntu-latest
+    needs: [package]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: packaged-artifacts
+          path: artifacts/
+      
+      - name: Upload to GitHub Releases (example)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload to Maven Central (example)
+        if: false  # Отключено, включите при необходимости
+        run: |
+          echo "Пример загрузки в Maven Central"
+          # ./gradlew publish
+
+
