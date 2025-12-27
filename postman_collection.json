@@ -1,44 +1,14 @@
 {
 	"info": {
 		"name": "RBPO 2025 - Все задания",
-		"description": "Коллекция запросов для заданий 1-4 курса РБПО 2025",
+		"description": "Коллекция запросов для заданий 1-5 курса РБПО 2025",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					"// Автоматически обновляем CSRF токен из cookie перед каждым запросом",
-					"// Spring Security устанавливает токен в cookie XSRF-TOKEN при любом запросе",
-					"// Статические заголовки в запросах используют переменную {{csrfToken}}",
-					"let csrfToken = pm.cookies.get('XSRF-TOKEN');",
-					"",
-					"// Если токен найден в cookie, обновляем переменную коллекции",
-					"// Это автоматически обновит все статические заголовки X-XSRF-TOKEN в запросах",
-					"if (csrfToken) {",
-					"    pm.collectionVariables.set('csrfToken', csrfToken);",
-					"} else {",
-					"    // Если в cookie нет, используем сохраненное значение из переменной",
-					"    csrfToken = pm.collectionVariables.get('csrfToken');",
-					"    if (!csrfToken) {",
-					"        console.log('⚠️ CSRF Token not found. Make a GET request first to get the token.');",
-					"    }",
-					"}"
-				]
-			}
-		}
-	],
+	"event": [],
 	"variable": [
 		{
 			"key": "baseUrl",
 			"value": "http://localhost:8080",
-			"type": "string"
-		},
-		{
-			"key": "csrfToken",
-			"value": "",
 			"type": "string"
 		},
 		{
@@ -59,6 +29,31 @@
 		{
 			"key": "userPassword",
 			"value": "User123!@#",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "oldRefreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "testUsername",
+			"value": "testuser",
+			"type": "string"
+		},
+		{
+			"key": "testPassword",
+			"value": "Test123!@#",
 			"type": "string"
 		}
 	],
@@ -106,10 +101,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -200,10 +191,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -236,12 +223,7 @@
 							"name": "DELETE Delete sender",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/senders/1",
 									"host": ["{{baseUrl}}"],
@@ -277,10 +259,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -371,10 +349,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -407,12 +381,7 @@
 							"name": "DELETE Delete recipient",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/recipients/1",
 									"host": ["{{baseUrl}}"],
@@ -448,10 +417,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -542,10 +507,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -578,12 +539,7 @@
 							"name": "DELETE Delete courier",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/couriers/1",
 									"host": ["{{baseUrl}}"],
@@ -619,10 +575,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -713,10 +665,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -749,12 +697,7 @@
 							"name": "DELETE Delete parcel",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/parcels/1",
 									"host": ["{{baseUrl}}"],
@@ -790,10 +733,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -884,10 +823,6 @@
 									{
 										"key": "Content-Type",
 										"value": "application/json"
-									},
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
 									}
 								],
 								"body": {
@@ -920,12 +855,7 @@
 							"name": "DELETE Delete delivery",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "X-XSRF-TOKEN",
-										"value": "{{csrfToken}}"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{baseUrl}}/api/deliveries/1",
 									"host": ["{{baseUrl}}"],
@@ -963,10 +893,6 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "X-XSRF-TOKEN",
-								"value": "{{csrfToken}}"
 							}
 						],
 						"body": {
@@ -1003,10 +929,6 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "X-XSRF-TOKEN",
-								"value": "{{csrfToken}}"
 							}
 						],
 						"body": {
@@ -1043,10 +965,6 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "X-XSRF-TOKEN",
-								"value": "{{csrfToken}}"
 							}
 						],
 						"body": {
@@ -1083,10 +1001,6 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "X-XSRF-TOKEN",
-								"value": "{{csrfToken}}"
 							}
 						],
 						"body": {
@@ -1123,10 +1037,6 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "X-XSRF-TOKEN",
-								"value": "{{csrfToken}}"
 							}
 						],
 						"body": {
@@ -1159,12 +1069,7 @@
 					"name": "Операция 5: Контроль SLA и автоматическое помечание просрочек",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "X-XSRF-TOKEN",
-								"value": "{{csrfToken}}"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/business/deliveries/check-sla",
 							"host": ["{{baseUrl}}"],
@@ -1192,46 +1097,6 @@
 		{
 			"name": "Задание 4 - Безопасность",
 			"item": [
-				{
-					"name": "GET Get CSRF token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Сохраняем CSRF токен из cookie в переменную коллекции",
-									"if (pm.response.code === 200) {",
-									"    const csrfCookie = pm.cookies.get('XSRF-TOKEN');",
-									"    if (csrfCookie) {",
-									"        pm.collectionVariables.set('csrfToken', csrfCookie);",
-									"        console.log('✅ CSRF Token saved: ' + csrfCookie);",
-									"    } else {",
-									"        try {",
-									"            var jsonData = pm.response.json();",
-									"            if (jsonData.token) {",
-									"                pm.collectionVariables.set('csrfToken', jsonData.token);",
-									"                console.log('✅ CSRF Token from JSON saved: ' + jsonData.token);",
-									"            }",
-									"        } catch (e) {",
-									"            console.log('⚠️ CSRF Token will be available after next request');",
-									"        }",
-									"    }",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/csrf",
-							"host": ["{{baseUrl}}"],
-							"path": ["api", "csrf"]
-						}
-					}
-				},
 				{
 					"name": "POST Register user",
 					"request": {
@@ -1293,17 +1158,13 @@
 					}
 				},
 				{
-					"name": "POST Test with token (admin)",
+					"name": "POST Test (admin)",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "X-XSRF-TOKEN",
-								"value": "{{csrfToken}}"
 							}
 						],
 						"body": {
@@ -1333,7 +1194,7 @@
 					}
 				},
 				{
-					"name": "POST Test without token - should fail",
+					"name": "POST Test without auth - should fail",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1367,6 +1228,459 @@
 							]
 						}
 					}
+				}
+			]
+		},
+		{
+			"name": "Задание 5 - JWT Authentication",
+			"item": [
+				{
+					"name": "0. Регистрация пользователя (опционально)",
+					"item": [
+						{
+							"name": "POST Register User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response has username', function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('username');",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"{{testUsername}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/register",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "auth", "register"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Шаг 1: Логин и получение токенов",
+					"item": [
+						{
+							"name": "POST Login - получить access и refresh токены",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response contains accessToken', function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('accessToken');",
+											"    pm.expect(jsonData.accessToken).to.be.a('string');",
+											"    pm.expect(jsonData.accessToken.length).to.be.above(0);",
+											"});",
+											"",
+											"pm.test('Response contains refreshToken', function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('refreshToken');",
+											"    pm.expect(jsonData.refreshToken).to.be.a('string');",
+											"    pm.expect(jsonData.refreshToken.length).to.be.above(0);",
+											"});",
+											"",
+											"if (pm.response.code === 200) {",
+											"    const jsonData = pm.response.json();",
+											"    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+											"    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+											"    pm.collectionVariables.set('oldRefreshToken', jsonData.refreshToken);",
+											"    console.log('✅ Tokens saved to collection variables');",
+											"}"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"{{testUsername}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/login",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "auth", "login"]
+								},
+								"description": "Шаг 1: Вызвать POST /auth/login, получить access и refresh токены"
+							}
+						}
+					]
+				},
+				{
+					"name": "Шаг 2: Использование access токена",
+					"item": [
+						{
+							"name": "GET Senders - с access токеном",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"let accessToken = pm.collectionVariables.get('accessToken');",
+											"if (!accessToken) {",
+											"    console.log('⚠️ Access token not found. Run POST Login first.');",
+											"} else {",
+											"    pm.request.headers.add({",
+											"        key: 'Authorization',",
+											"        value: 'Bearer ' + accessToken",
+											"    });",
+											"    console.log('✅ Using access token for authentication');",
+											"}"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Access granted with access token', function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/senders",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders"]
+								},
+								"description": "Шаг 2: Использовать access токен для доступа к защищенному endpoint. Убедиться, что доступ предоставлен."
+							}
+						}
+					]
+				},
+				{
+					"name": "Шаг 3: Обновление токенов",
+					"item": [
+						{
+							"name": "POST Refresh - получить новую пару токенов",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"let refreshToken = pm.collectionVariables.get('refreshToken');",
+											"if (!refreshToken) {",
+											"    console.log('⚠️ Refresh token not found. Run POST Login first.');",
+											"} else {",
+											"    console.log('Using refresh token:', refreshToken.substring(0, 20) + '...');",
+											"}"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 200', function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test('Response contains new accessToken', function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('accessToken');",
+											"});",
+											"",
+											"pm.test('Response contains new refreshToken', function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('refreshToken');",
+											"});",
+											"",
+											"if (pm.response.code === 200) {",
+											"    const jsonData = pm.response.json();",
+											"    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
+											"    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+											"    console.log('✅ New tokens saved');",
+											"}"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/refresh",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "auth", "refresh"]
+								},
+								"description": "Шаг 3: Вызвать POST /auth/refresh с текущим refresh токеном и получить новую пару токенов"
+							}
+						}
+					]
+				},
+				{
+					"name": "Шаг 4: Попытка использовать старый refresh токен",
+					"item": [
+						{
+							"name": "POST Refresh - с СТАРЫМ refresh токеном (должен вернуть ошибку)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"let oldRefreshToken = pm.collectionVariables.get('oldRefreshToken');",
+											"if (!oldRefreshToken) {",
+											"    console.log('⚠️ Old refresh token not found. Run POST Login first.');",
+											"} else {",
+											"    console.log('Using OLD refresh token (should fail):', oldRefreshToken.substring(0, 20) + '...');",
+											"}"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 401 or 403', function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+											"});",
+											"",
+											"pm.test('Server returns error and does not issue new tokens', function () {",
+											"    pm.expect(pm.response.code).to.not.equal(200);",
+											"    try {",
+											"        const jsonData = pm.response.json();",
+											"        pm.expect(jsonData).to.not.have.property('accessToken');",
+											"        pm.expect(jsonData).to.not.have.property('refreshToken');",
+											"    } catch (e) {",
+											"        // OK if response is not JSON",
+											"    }",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"{{oldRefreshToken}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/refresh",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "auth", "refresh"]
+								},
+								"description": "Шаг 4: Вызвать /auth/refresh снова со СТАРЫМ refresh токеном. Убедиться, что сервер возвращает ошибку (статус 401/403) и не выдает новую пару токенов."
+							}
+						}
+					]
+				},
+				{
+					"name": "Шаг 5: Проверка статусов сессий в БД",
+					"item": [
+						{
+							"name": "Инструкция: Проверка в pgAdmin4",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"const sqlQuery = `SELECT \\n    us.id,\\n    u.username,\\n    us.status,\\n    us.created_at,\\n    us.expires_at\\nFROM user_sessions us\\nJOIN app_users u ON us.user_id = u.id\\nORDER BY us.created_at DESC;`;",
+											"",
+											"console.log('\\n========================================');",
+											"console.log('ШАГ 5: Проверка статусов сессий в БД');",
+											"console.log('========================================\\n');",
+											"console.log('Выполните следующий SQL запрос в pgAdmin4:\\n');",
+											"console.log(sqlQuery);",
+											"console.log('\\nОжидаемый результат:');",
+											"console.log('- Должны быть видны сессии со статусами:');",
+											"console.log('  * ACTIVE - текущая активная сессия (последняя после refresh)');",
+											"console.log('  * REVOKED - отозванные сессии (после использования refresh токена)');",
+											"console.log('  * EXPIRED - истекшие сессии (если есть)');",
+											"console.log('\\nЭто подтверждает, что:');",
+											"console.log('1. Старые refresh токены помечаются как REVOKED');",
+											"console.log('2. Новые сессии создаются со статусом ACTIVE');",
+											"console.log('3. Система правильно отслеживает жизненный цикл токенов');",
+											"console.log('\\n========================================\\n');",
+											"",
+											"pm.test('Инструкция выведена в консоль', function () {",
+											"    pm.expect(true).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/info",
+									"host": ["{{baseUrl}}"],
+									"path": ["info"]
+								},
+								"description": "Шаг 5: Проверить статусы сессий в базе данных.\n\n📋 SQL запрос для pgAdmin4:\n\n```sql\nSELECT \n    us.id,\n    u.username,\n    us.status,\n    us.created_at,\n    us.expires_at\nFROM user_sessions us\nJOIN app_users u ON us.user_id = u.id\nORDER BY us.created_at DESC;\n```\n\n✅ Ожидаемый результат:\n- Должны быть видны сессии со статусами:\n  * ACTIVE - текущая активная сессия (последняя после refresh)\n  * REVOKED - отозванные сессии (после использования refresh токена)\n  * EXPIRED - истекшие сессии (если есть)\n\n🔍 Это подтверждает, что:\n1. Старые refresh токены помечаются как REVOKED\n2. Новые сессии создаются со статусом ACTIVE\n3. Система правильно отслеживает жизненный цикл токенов\n\n💡 Откройте консоль Postman (View → Show Postman Console) чтобы увидеть SQL запрос!"
+							}
+						}
+					]
+				},
+				{
+					"name": "Дополнительные тесты",
+					"item": [
+						{
+							"name": "GET Senders - без токена (должен вернуть 401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 401', function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/senders",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders"]
+								},
+								"description": "Проверка, что без токена доступ запрещен"
+							}
+						},
+						{
+							"name": "POST Login - с неверными credentials (должен вернуть 401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 401', function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"wronguser\",\n  \"password\": \"wrongpass\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/auth/login",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "auth", "login"]
+								},
+								"description": "Проверка обработки неверных учетных данных"
+							}
+						},
+						{
+							"name": "GET Senders - с невалидным токеном (должен вернуть 401)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.request.headers.add({",
+											"    key: 'Authorization',",
+											"    value: 'Bearer invalid_token_12345'",
+											"});"
+										]
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"pm.test('Status code is 401 or 403', function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/senders",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "senders"]
+								},
+								"description": "Проверка обработки невалидного токена"
+							}
+						}
+					]
 				}
 			]
 		}
